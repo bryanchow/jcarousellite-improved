@@ -385,12 +385,15 @@
         },
 
         prev: function() {
+            return go(curr - options.scroll);
         },
 
         next: function() {
+            return go(curr + options.scroll);
         },
 
         go: function(to) {
+            return go(to);
         }
 
     };
