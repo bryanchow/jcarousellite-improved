@@ -246,13 +246,12 @@
                 var div = $(this),
                     ul = $("ul", div),
                     tLi = $("li", ul),
-                    tl = tLi.size(),
-                    v = options.visible;
+                    tl = tLi.size();
 
                 if (options.circular) {
-                    ul.prepend(tLi.slice(tl-v-1+1).clone())
-                    .append(tLi.slice(0,v).clone());
-                    options.start += v;
+                    ul.prepend(tLi.slice(tl-options.visible-1+1).clone())
+                    .append(tLi.slice(0, options.visible).clone());
+                    options.start += options.visible;
                 }
 
                 var li = $("li", ul), itemLength = li.size(), curr = options.start;
@@ -267,7 +266,7 @@
                 // size of full ul(total length, not just for the visible items)
                 var ulSize = liSize * itemLength;
                 // size of entire div(total length for just the visible items)
-                var divSize = liSize * v;
+                var divSize = liSize * options.visible;
 
                 li.css({width: li.width(), height: li.height()});
                 ul.css(sizeCss, ulSize+"px").css(animCss, -(curr*liSize));
@@ -276,7 +275,7 @@
                 div.css(sizeCss, divSize+"px");
 
                 function vis() {
-                    return li.slice(curr).slice(0,v);
+                    return li.slice(curr).slice(0, options.visible);
                 }
 
                 function go(to) {
@@ -287,25 +286,25 @@
                         // If circular we are in first or last, then goto the
                         // other end
                         if (options.circular) {
-                            if (to <= v-1) {
+                            if (to <= options.visible-1) {
                                 // If first, then goto last
-                                ul.css(animCss, -((itemLength-(v*2))*liSize)+"px");
+                                ul.css(animCss, -((itemLength-(options.visible*2))*liSize)+"px");
                                 // If "scroll" > 1, then the "to" might not be
                                 // equal to the condition; it can be lesser
                                 // depending on the number of elements.
-                                curr = to === v-1 ? itemLength-(v*2)-1 : itemLength-(v*2)-options.scroll;
-                            } else if (to >= itemLength-v+1) {
+                                curr = to === options.visible-1 ? itemLength-(options.visible*2)-1 : itemLength-(options.visible*2)-options.scroll;
+                            } else if (to >= itemLength-options.visible+1) {
                                 // If last, then goto first
-                                ul.css(animCss, -((v) * liSize) + "px");
+                                ul.css(animCss, -(options.visible * liSize) + "px");
                                 // If "scroll" > 1, then the "to" might not be
                                 // equal to the condition; it can be greater
                                 // depending on the number of elements.
-                                curr = to === itemLength-v+1 ? v+1 : v+options.scroll;
+                                curr = to === itemLength-options.visible+1 ? options.visible+1 : options.visible+options.scroll;
                             } else {
                                 curr = to;
                             }
                         } else {
-                            if (to < 0 || to > itemLength - v) {
+                            if (to < 0 || to > itemLength - options.visible) {
                                 // If non-circular and to points to first or
                                 // last, we just return.
                                 return;
@@ -330,7 +329,7 @@
                         if (!options.circular) {
                             $(options.btnPrev + "," + options.btnNext).removeClass("disabled");
                             $((curr-options.scroll<0 && options.btnPrev) ||
-                                (curr+options.scroll > itemLength-v && options.btnNext) ||
+                                (curr+options.scroll > itemLength-options.visible && options.btnNext) ||
                                 []
                             ).addClass("disabled");
                         }
