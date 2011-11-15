@@ -201,6 +201,19 @@
  */
 
 (function($) {                                          // Compliant with jquery.noConflict()
+
+    function css(el, prop) {
+        return parseInt($.css(el[0], prop)) || 0;
+    };
+
+    function width(el) {
+        return el[0].offsetWidth + css(el, 'marginLeft') + css(el, 'marginRight');
+    };
+
+    function height(el) {
+        return el[0].offsetHeight + css(el, 'marginTop') + css(el, 'marginBottom');
+    };
+
 $.fn.jCarouselLite = function(o) {
     o = $.extend({
         btnPrev: null,
@@ -248,33 +261,6 @@ $.fn.jCarouselLite = function(o) {
         ul.css(sizeCss, ulSize+"px").css(animCss, -(curr*liSize));
 
         div.css(sizeCss, divSize+"px");                     // Width of the DIV. length of visible images
-
-        if(o.btnPrev)
-            $(o.btnPrev).click(function() {
-                return go(curr-o.scroll);
-            });
-
-        if(o.btnNext)
-            $(o.btnNext).click(function() {
-                return go(curr+o.scroll);
-            });
-
-        if(o.btnGo)
-            $.each(o.btnGo, function(i, val) {
-                $(val).click(function() {
-                    return go(o.circular ? o.visible+i : i);
-                });
-            });
-
-        if(o.mouseWheel && div.mousewheel)
-            div.mousewheel(function(e, d) {
-                return d>0 ? go(curr-o.scroll) : go(curr+o.scroll);
-            });
-
-        if(o.auto)
-            setInterval(function() {
-                go(curr+o.scroll);
-            }, o.auto+o.speed);
 
         function vis() {
             return li.slice(curr).slice(0,v);
@@ -325,17 +311,35 @@ $.fn.jCarouselLite = function(o) {
             }
             return false;
         };
-    });
-};
 
-function css(el, prop) {
-    return parseInt($.css(el[0], prop)) || 0;
-};
-function width(el) {
-    return  el[0].offsetWidth + css(el, 'marginLeft') + css(el, 'marginRight');
-};
-function height(el) {
-    return el[0].offsetHeight + css(el, 'marginTop') + css(el, 'marginBottom');
+        if(o.btnPrev)
+            $(o.btnPrev).click(function() {
+                return go(curr-o.scroll);
+            });
+
+        if(o.btnNext)
+            $(o.btnNext).click(function() {
+                return go(curr+o.scroll);
+            });
+
+        if(o.btnGo)
+            $.each(o.btnGo, function(i, val) {
+                $(val).click(function() {
+                    return go(o.circular ? o.visible+i : i);
+                });
+            });
+
+        if(o.mouseWheel && div.mousewheel)
+            div.mousewheel(function(e, d) {
+                return d>0 ? go(curr-o.scroll) : go(curr+o.scroll);
+            });
+
+        if(o.auto)
+            setInterval(function() {
+                go(curr+o.scroll);
+            }, o.auto+o.speed);
+
+    });
 };
 
 })(jQuery);
