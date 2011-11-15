@@ -203,7 +203,7 @@
 (function($) {                                          // Compliant with jquery.noConflict()
 
     function css(el, prop) {
-        return parseInt($.css(el[0], prop)) || 0;
+        return parseInt($.css(el[0], prop), 10) || 0;
     }
 
     function width(el) {
