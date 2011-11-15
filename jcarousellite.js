@@ -1,3 +1,4 @@
+/*jslint unparam:true, sloppy:true, vars:true, white:true */
 /*global window, jQuery */
 
 /**
