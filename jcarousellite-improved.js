@@ -230,33 +230,36 @@
         return li.slice(curr).slice(0, options.visible);
     }
 
-    function go(to) {
+    function go(to, opts) {
+        // opts overrides options from init
+        opts = opts || {};
+        opts = $.extend({}, options, opts);
         if (!running) {
-            if (options.beforeStart) {
-                options.beforeStart.call(this, vis());
+            if (opts.beforeStart) {
+                opts.beforeStart.call(this, vis());
             }
             // If circular we are in first or last, then goto the
             // other end
-            if (options.circular) {
-                if (to <= options.visible-1) {
+            if (opts.circular) {
+                if (to <= opts.visible - 1) {
                     // If first, then goto last
-                    ul.css(animCss, -((itemLength-(options.visible*2))*liSize)+"px");
+                    ul.css(animCss, -((itemLength - (opts.visible * 2)) * liSize) + 'px');
                     // If "scroll" > 1, then the "to" might not be
                     // equal to the condition; it can be lesser
                     // depending on the number of elements.
-                    curr = to === options.visible-1 ? itemLength-(options.visible*2)-1 : itemLength-(options.visible*2)-options.scroll;
-                } else if (to >= itemLength-options.visible+1) {
+                    curr = to === opts.visible - 1 ? itemLength - (opts.visible * 2) - 1 : itemLength - (opts.visible * 2) - opts.scroll;
+                } else if (to >= itemLength - opts.visible + 1) {
                     // If last, then goto first
-                    ul.css(animCss, -(options.visible * liSize) + "px");
+                    ul.css(animCss, -(opts.visible * liSize) + 'px');
                     // If "scroll" > 1, then the "to" might not be
                     // equal to the condition; it can be greater
                     // depending on the number of elements.
-                    curr = to === itemLength-options.visible+1 ? options.visible+1 : options.visible+options.scroll;
+                    curr = to === itemLength - opts.visible + 1 ? opts.visible + 1 : opts.visible + opts.scroll;
                 } else {
                     curr = to;
                 }
             } else {
-                if (to < 0 || to > itemLength - options.visible) {
+                if (to < 0 || to > itemLength - opts.visible) {
                     // If non-circular and to points to first or
                     // last, we just return.
                     return;
@@ -268,22 +271,22 @@
             }
             running = true;
             ul.animate(
-                animCss === "left" ? { left: -(curr*liSize) } : { top: -(curr*liSize) } , options.speed, options.easing,
+                animCss === 'left' ? {left: -(curr*liSize)} : {top: -(curr * liSize)}, opts.speed, opts.easing,
                 function() {
-                    if (options.afterEnd) {
-                        options.afterEnd.call(this, vis());
+                    if (opts.afterEnd) {
+                        opts.afterEnd.call(this, vis());
                     }
                     running = false;
                 }
             );
             // Disable buttons when the carousel reaches the
             // last/first, and enable when not
-            if (!options.circular) {
-                $(options.btnPrev + "," + options.btnNext).removeClass("disabled");
-                $((curr-options.scroll<0 && options.btnPrev) ||
-                    (curr+options.scroll > itemLength-options.visible && options.btnNext) ||
+            if (!opts.circular) {
+                $(opts.btnPrev + ',' + opts.btnNext).removeClass('disabled');
+                $((curr - opts.scroll < 0 && opts.btnPrev) ||
+                    (curr + opts.scroll > itemLength - opts.visible && opts.btnNext) ||
                     []
-                ).addClass("disabled");
+                ).addClass('disabled');
             }
         }
         return false;
@@ -385,16 +388,16 @@
 
         },
 
-        prev: function() {
-            return go(curr - options.scroll);
+        prev: function(opts) {
+            return go(curr - options.scroll, opts);
         },
 
-        next: function() {
-            return go(curr + options.scroll);
+        next: function(opts) {
+            return go(curr + options.scroll, opts);
         },
 
-        go: function(to) {
-            return go(to);
+        go: function(to, opts) {
+            return go(to, opts);
         }
 
     };
