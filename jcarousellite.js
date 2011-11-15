@@ -243,7 +243,7 @@
             var running = false, animCss=o.vertical?"top":"left", sizeCss=o.vertical?"height":"width";
             var div = $(this), ul = $("ul", div), tLi = $("li", ul), tl = tLi.size(), v = o.visible;
 
-            if(o.circular) {
+            if (o.circular) {
                 ul.prepend(tLi.slice(tl-v-1+1).clone())
                 .append(tLi.slice(0,v).clone());
                 o.start += v;
@@ -270,13 +270,13 @@
             }
 
             function go(to) {
-                if(!running) {
-                    if(o.beforeStart) {
+                if (!running) {
+                    if (o.beforeStart) {
                         o.beforeStart.call(this, vis());
                     }
                     // If circular we are in first or last, then goto the other
                     // end
-                    if(o.circular) {
+                    if (o.circular) {
                         if (to <= v-1) {
                             // If first, then goto last
                             ul.css(animCss, -((itemLength-(v*2))*liSize)+"px");
@@ -284,9 +284,9 @@
                             // equal to the condition; it can be lesser
                             // depending on the number of elements.
                             curr = to === v-1 ? itemLength-(v*2)-1 : itemLength-(v*2)-o.scroll;
-                        } else if(to >= itemLength-v+1) {
+                        } else if (to >= itemLength-v+1) {
                             // If last, then goto first
-                            ul.css(animCss, -( (v) * liSize ) + "px" );
+                            ul.css(animCss, -((v) * liSize) + "px");
                             // If "scroll" > 1, then the "to" might not be
                             // equal to the condition; it can be greater
                             // depending on the number of elements.
@@ -309,7 +309,7 @@
                     ul.animate(
                         animCss === "left" ? { left: -(curr*liSize) } : { top: -(curr*liSize) } , o.speed, o.easing,
                         function() {
-                            if(o.afterEnd) {
+                            if (o.afterEnd) {
                                 o.afterEnd.call(this, vis());
                             }
                             running = false;
@@ -317,9 +317,9 @@
                     );
                     // Disable buttons when the carousel reaches the
                     // last/first, and enable when not
-                    if(!o.circular) {
+                    if (!o.circular) {
                         $(o.btnPrev + "," + o.btnNext).removeClass("disabled");
-                        $( (curr-o.scroll<0 && o.btnPrev) ||
+                        $((curr-o.scroll<0 && o.btnPrev) ||
                         (curr+o.scroll > itemLength-v && o.btnNext) ||
                         []
                         ).addClass("disabled");
@@ -329,19 +329,19 @@
                 return false;
             }
 
-            if(o.btnPrev) {
+            if (o.btnPrev) {
                 $(o.btnPrev).click(function() {
                     return go(curr-o.scroll);
                 });
             }
 
-            if(o.btnNext) {
+            if (o.btnNext) {
                 $(o.btnNext).click(function() {
                     return go(curr+o.scroll);
                 });
             }
 
-            if(o.btnGo) {
+            if (o.btnGo) {
                 $.each(o.btnGo, function(i, val) {
                     $(val).click(function() {
                         return go(o.circular ? o.visible+i : i);
@@ -349,13 +349,13 @@
                 });
             }
 
-            if(o.mouseWheel && div.mousewheel) {
+            if (o.mouseWheel && div.mousewheel) {
                 div.mousewheel(function(e, d) {
                     return d>0 ? go(curr-o.scroll) : go(curr+o.scroll);
                 });
             }
 
-            if(o.auto) {
+            if (o.auto) {
                 window.setInterval(function() {
                     go(curr+o.scroll);
                 }, o.auto+o.speed);
