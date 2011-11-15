@@ -290,11 +290,11 @@ $.fn.jCarouselLite = function(o) {
                     if(to<=o.start-v-1) {           // If first, then goto last
                         ul.css(animCss, -((itemLength-(v*2))*liSize)+"px");
                         // If "scroll" > 1, then the "to" might not be equal to the condition; it can be lesser depending on the number of elements.
-                        curr = to==o.start-v-1 ? itemLength-(v*2)-1 : itemLength-(v*2)-o.scroll;
+                        curr = to === o.start-v-1 ? itemLength-(v*2)-1 : itemLength-(v*2)-o.scroll;
                     } else if(to>=itemLength-v+1) { // If last, then goto first
                         ul.css(animCss, -( (v) * liSize ) + "px" );
                         // If "scroll" > 1, then the "to" might not be equal to the condition; it can be greater depending on the number of elements.
-                        curr = to==itemLength-v+1 ? v+1 : v+o.scroll;
+                        curr = to === itemLength-v+1 ? v+1 : v+o.scroll;
                     } else curr = to;
                 } else {                    // If non-circular and to points to first or last, we just return.
                     if(to<0 || to>itemLength-v) return;
@@ -304,7 +304,7 @@ $.fn.jCarouselLite = function(o) {
                 running = true;
 
                 ul.animate(
-                    animCss == "left" ? { left: -(curr*liSize) } : { top: -(curr*liSize) } , o.speed, o.easing,
+                    animCss === "left" ? { left: -(curr*liSize) } : { top: -(curr*liSize) } , o.speed, o.easing,
                     function() {
                         if(o.afterEnd)
                             o.afterEnd.call(this, vis());
