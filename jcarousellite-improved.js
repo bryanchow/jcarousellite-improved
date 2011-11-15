@@ -334,7 +334,7 @@
                 curr = options.start;
                 div.css("visibility", "visible");
 
-                li.css({overflow: "hidden", float: options.vertical ? "none" : "left"});
+                li.css({overflow: "hidden", 'float': options.vertical ? "none" : "left"});
                 ul.css({margin: "0", padding: "0", position: "relative", "list-style-type": "none", "z-index": "1"});
                 div.css({overflow: "hidden", position: "relative", "z-index": "2", left: "0px"});
 
