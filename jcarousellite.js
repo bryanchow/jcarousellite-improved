@@ -277,13 +277,13 @@
                     // If circular we are in first or last, then goto the other
                     // end
                     if(o.circular) {
-                        if(to<=o.start-v-1) {
+                        if (to <= v-1) {
                             // If first, then goto last
                             ul.css(animCss, -((itemLength-(v*2))*liSize)+"px");
                             // If "scroll" > 1, then the "to" might not be
                             // equal to the condition; it can be lesser
                             // depending on the number of elements.
-                            curr = to === o.start-v-1 ? itemLength-(v*2)-1 : itemLength-(v*2)-o.scroll;
+                            curr = to === v-1 ? itemLength-(v*2)-1 : itemLength-(v*2)-o.scroll;
                         } else if(to >= itemLength-v+1) {
                             // If last, then goto first
                             ul.css(animCss, -( (v) * liSize ) + "px" );
