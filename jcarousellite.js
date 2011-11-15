@@ -1,3 +1,5 @@
+/*global window, jQuery */
+
 /**
  * jCarouselLite - jQuery plugin to navigate images/any content in a carousel style widget.
  * @requires jQuery v1.2 or above
@@ -346,7 +348,7 @@ $.fn.jCarouselLite = function(o) {
         }
 
         if(o.auto) {
-            setInterval(function() {
+            window.setInterval(function() {
                 go(curr+o.scroll);
             }, o.auto+o.speed);
         }
@@ -354,4 +356,4 @@ $.fn.jCarouselLite = function(o) {
     });
 };
 
-})(jQuery);
+}(jQuery));
