@@ -216,9 +216,81 @@
         return el[0].offsetHeight + css(el, 'marginTop') + css(el, 'marginBottom');
     }
 
+    var options,
+        running = false,
+        itemLength,
+        curr,
+        animCss,
+        ul,
+        li,
+        liSize;
+
+    function vis() {
+        return li.slice(curr).slice(0, options.visible);
+    }
+
+    function go(to) {
+        if (!running) {
+            if (options.beforeStart) {
+                options.beforeStart.call(this, vis());
+            }
+            // If circular we are in first or last, then goto the
+            // other end
+            if (options.circular) {
+                if (to <= options.visible-1) {
+                    // If first, then goto last
+                    ul.css(animCss, -((itemLength-(options.visible*2))*liSize)+"px");
+                    // If "scroll" > 1, then the "to" might not be
+                    // equal to the condition; it can be lesser
+                    // depending on the number of elements.
+                    curr = to === options.visible-1 ? itemLength-(options.visible*2)-1 : itemLength-(options.visible*2)-options.scroll;
+                } else if (to >= itemLength-options.visible+1) {
+                    // If last, then goto first
+                    ul.css(animCss, -(options.visible * liSize) + "px");
+                    // If "scroll" > 1, then the "to" might not be
+                    // equal to the condition; it can be greater
+                    // depending on the number of elements.
+                    curr = to === itemLength-options.visible+1 ? options.visible+1 : options.visible+options.scroll;
+                } else {
+                    curr = to;
+                }
+            } else {
+                if (to < 0 || to > itemLength - options.visible) {
+                    // If non-circular and to points to first or
+                    // last, we just return.
+                    return;
+                } else {
+                    // If neither overrides it, the curr will still
+                    // be "to" and we can proceed.
+                    curr = to;
+                }
+            }
+            running = true;
+            ul.animate(
+                animCss === "left" ? { left: -(curr*liSize) } : { top: -(curr*liSize) } , options.speed, options.easing,
+                function() {
+                    if (options.afterEnd) {
+                        options.afterEnd.call(this, vis());
+                    }
+                    running = false;
+                }
+            );
+            // Disable buttons when the carousel reaches the
+            // last/first, and enable when not
+            if (!options.circular) {
+                $(options.btnPrev + "," + options.btnNext).removeClass("disabled");
+                $((curr-options.scroll<0 && options.btnPrev) ||
+                    (curr+options.scroll > itemLength-options.visible && options.btnNext) ||
+                    []
+                ).addClass("disabled");
+            }
+        }
+        return false;
+    }
+
     var methods = {
 
-        init: function(options) {
+        init: function(opts) {
 
             options = $.extend({
                 btnPrev: null,
@@ -235,18 +307,17 @@
                 scroll: 1,
                 beforeStart: null,
                 afterEnd: null
-            }, options || {});
+            }, opts || {});
 
             return this.each(function() { // Returns the element collection. Chainable.
 
-                var running = false,
-                    animCss = options.vertical?"top":"left",
-                    sizeCss = options.vertical?"height":"width";
+                animCss = options.vertical?"top":"left";
+                var sizeCss = options.vertical?"height":"width";
 
-                var div = $(this),
-                    ul = $("ul", div),
-                    tLi = $("li", ul),
-                    tl = tLi.size();
+                var div = $(this);
+                ul = $("ul", div);
+                var tLi = $("li", ul);
+                var tl = tLi.size();
 
                 if (options.circular) {
                     ul.prepend(tLi.slice(tl-options.visible-1+1).clone())
@@ -254,7 +325,9 @@
                     options.start += options.visible;
                 }
 
-                var li = $("li", ul), itemLength = li.size(), curr = options.start;
+                li = $("li", ul);
+                itemLength = li.size();
+                curr = options.start;
                 div.css("visibility", "visible");
 
                 li.css({overflow: "hidden", float: options.vertical ? "none" : "left"});
@@ -262,7 +335,7 @@
                 div.css({overflow: "hidden", position: "relative", "z-index": "2", left: "0px"});
 
                 // Full li size(incl margin)-Used for animation
-                var liSize = options.vertical ? height(li) : width(li);
+                liSize = options.vertical ? height(li) : width(li);
                 // size of full ul(total length, not just for the visible items)
                 var ulSize = liSize * itemLength;
                 // size of entire div(total length for just the visible items)
@@ -273,70 +346,6 @@
 
                 // Width of the DIV. length of visible images
                 div.css(sizeCss, divSize+"px");
-
-                function vis() {
-                    return li.slice(curr).slice(0, options.visible);
-                }
-
-                function go(to) {
-                    if (!running) {
-                        if (options.beforeStart) {
-                            options.beforeStart.call(this, vis());
-                        }
-                        // If circular we are in first or last, then goto the
-                        // other end
-                        if (options.circular) {
-                            if (to <= options.visible-1) {
-                                // If first, then goto last
-                                ul.css(animCss, -((itemLength-(options.visible*2))*liSize)+"px");
-                                // If "scroll" > 1, then the "to" might not be
-                                // equal to the condition; it can be lesser
-                                // depending on the number of elements.
-                                curr = to === options.visible-1 ? itemLength-(options.visible*2)-1 : itemLength-(options.visible*2)-options.scroll;
-                            } else if (to >= itemLength-options.visible+1) {
-                                // If last, then goto first
-                                ul.css(animCss, -(options.visible * liSize) + "px");
-                                // If "scroll" > 1, then the "to" might not be
-                                // equal to the condition; it can be greater
-                                // depending on the number of elements.
-                                curr = to === itemLength-options.visible+1 ? options.visible+1 : options.visible+options.scroll;
-                            } else {
-                                curr = to;
-                            }
-                        } else {
-                            if (to < 0 || to > itemLength - options.visible) {
-                                // If non-circular and to points to first or
-                                // last, we just return.
-                                return;
-                            } else {
-                                // If neither overrides it, the curr will still
-                                // be "to" and we can proceed.
-                                curr = to;
-                            }
-                        }
-                        running = true;
-                        ul.animate(
-                            animCss === "left" ? { left: -(curr*liSize) } : { top: -(curr*liSize) } , options.speed, options.easing,
-                            function() {
-                                if (options.afterEnd) {
-                                    options.afterEnd.call(this, vis());
-                                }
-                                running = false;
-                            }
-                        );
-                        // Disable buttons when the carousel reaches the
-                        // last/first, and enable when not
-                        if (!options.circular) {
-                            $(options.btnPrev + "," + options.btnNext).removeClass("disabled");
-                            $((curr-options.scroll<0 && options.btnPrev) ||
-                                (curr+options.scroll > itemLength-options.visible && options.btnNext) ||
-                                []
-                            ).addClass("disabled");
-                        }
-
-                    }
-                    return false;
-                }
 
                 if (options.btnPrev) {
                     $(options.btnPrev).click(function() {
